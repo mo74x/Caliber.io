@@ -10,6 +10,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { MailModule } from './mail/mail.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -37,6 +39,12 @@ import { MailerModule } from '@nestjs-modules/mailer';
       }),
       inject: [ConfigService],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // Time to live (ms)
+        limit: 10, // Max requests
+      },
+    ]),
     UsersModule,
     AuthModule,
     CandidatesModule,
@@ -44,6 +52,12 @@ import { MailerModule } from '@nestjs-modules/mailer';
     MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

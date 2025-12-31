@@ -52,25 +52,39 @@ export class CandidatesService {
   }
 
   // Search Profiles
-  async search(filters: SearchCandidateDto): Promise<Candidate[]> {
+  async search(filters: SearchCandidateDto): Promise<{
+    data: Candidate[];
+    meta: { total: number; page: number; last_page: number };
+  }> {
     const query: any = { isVisible: true };
-
-    if (filters.skill) {
-      query.skills = { $regex: filters.skill, $options: 'i' };
-    }
-    if (filters.jobTitle) {
+    if (filters.skill) query.skills = { $regex: filters.skill, $options: 'i' };
+    if (filters.jobTitle)
       query.jobTitle = { $regex: filters.jobTitle, $options: 'i' };
-    }
-    if (filters.maxSalary) {
-      query.minSalary = { $lte: filters.maxSalary };
-    }
+    if (filters.maxSalary) query.minSalary = { $lte: filters.maxSalary };
 
+    // Pagination Math
+    const page = Number(filters.page) || 1;
+    const limit = Number(filters.limit) || 10;
+    const skip = (page - 1) * limit;
+    const [results, total] = await Promise.all([
+      this.candidateModel
+        .find(query)
+        .select('jobTitle skills experienceYears minSalary noticePeriod') // Public fields only
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.candidateModel.countDocuments(query).exec(),
+    ]);
     // SELECT ONLY PUBLIC FIELDS
     // We explicitly exclude: fullName, phone, linkedinUrl, cvUrl
-    return this.candidateModel
-      .find(query)
-      .select('jobTitle skills experienceYears minSalary noticePeriod')
-      .exec();
+    return {
+      data: results,
+      meta: {
+        total,
+        page,
+        last_page: Math.ceil(total / limit),
+      },
+    };
   }
   // Run this every day at Midnight
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
