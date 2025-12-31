@@ -55,4 +55,7 @@ export class UsersService {
       { new: true },
     );
   }
+  async findOneByResetToken(token: string): Promise<User | null> {
+    return this.userModel.findOne({ resetPasswordToken: token });
+  }
 }

@@ -30,5 +30,11 @@ export class User extends Document {
 
   @Prop({ default: UserStatus.ACTIVE, enum: UserStatus })
   status: UserStatus;
+
+  @Prop()
+  resetPasswordToken?: string;
+
+  @Prop()
+  resetPasswordExpires?: Date;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

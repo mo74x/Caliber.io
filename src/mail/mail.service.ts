@@ -22,4 +22,16 @@ export class MailService {
 
     console.log(`Email sent to ${name}`);
   }
+
+  async sendResetPasswordEmail(to: string, url: string) {
+    await this.mailerService.sendMail({
+      to: to,
+      subject: 'Reset your password',
+      html: `
+        <h3>Password Reset Request</h3>
+        <p>Click the link below to reset your password. It expires in 1 hour.</p>
+        <a href="${url}">Reset Password</a>
+      `,
+    });
+  }
 }
