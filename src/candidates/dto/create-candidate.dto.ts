@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsArray, IsString, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsArray,
+  IsString,
+  Min,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateCandidateDto {
   @IsNotEmpty()
@@ -18,4 +25,16 @@ export class CreateCandidateDto {
 
   @IsString()
   noticePeriod: string;
+
+  @IsNotEmpty()
+  @IsString()
+  fullName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
+
+  @IsOptional()
+  @IsString()
+  linkedinUrl: string;
 }

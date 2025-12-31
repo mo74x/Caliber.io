@@ -6,9 +6,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CandidatesModule } from './candidates/candidates.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -22,6 +25,7 @@ import { CandidatesModule } from './candidates/candidates.module';
     UsersModule,
     AuthModule,
     CandidatesModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

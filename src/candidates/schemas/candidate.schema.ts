@@ -27,6 +27,19 @@ export class Candidate extends Document {
   isVisible: boolean; // the "Freshness" toggle
   @Prop({ default: Date.now })
   lastActiveAt: Date;
+
+  // --- PRIVATE INFO (To be Locked) ---
+  @Prop({ required: true })
+  fullName: string;
+
+  @Prop({ required: true })
+  phone: string;
+
+  @Prop()
+  cvUrl: string; // Link to their PDF
+
+  @Prop()
+  linkedinUrl: string;
 }
 
 export const CandidateSchema = SchemaFactory.createForClass(Candidate);
