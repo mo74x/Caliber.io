@@ -1,9 +1,9 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { User, UserRole, UserStatus } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -22,10 +22,16 @@ export class UsersService {
     // Hash the password (security)
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
+    const initialStatus =
+      createUserDto.role === UserRole.RECRUITER
+        ? UserStatus.PENDING
+        : UserStatus.ACTIVE;
+
     // Save to Database
     const createdUser = new this.userModel({
       ...createUserDto,
       password: hashedPassword,
+      status: initialStatus,
     });
 
     return createdUser.save();
@@ -39,5 +45,14 @@ export class UsersService {
   // 3. Find all users (Optional, for admin)
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
+  }
+
+  // helper function for the Admin later
+  async approveUser(id: string): Promise<User | null> {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      { status: UserStatus.ACTIVE },
+      { new: true },
+    );
   }
 }

@@ -58,8 +58,9 @@ export class CandidatesController {
   // GET /candidates/unlock/:id
   @UseGuards(AuthGuard('jwt'))
   @Get(':id/unlock')
-  async unlockCandidate(@Param('id') id: string) {
-    return this.candidatesService.unlock(id);
+  async unlockCandidate(@Param('id') id: string, @Request() req) {
+    // req.user contains the logged in user's ID
+    return this.candidatesService.unlock(id, req.user.id); // Pass the Recruiter's ID
   }
 
   // POST /candidates/upload-cv

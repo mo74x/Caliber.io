@@ -9,12 +9,15 @@ import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { SearchCandidateDto } from './dto/search-candidate.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MailService } from '../mail/mail.service';
+import { User, UserStatus } from '../users/schemas/user.schema';
 
 @Injectable()
 export class CandidatesService {
   constructor(
-    @InjectModel(Candidate.name) private candidateModel: Model<Candidate>,
+    @InjectModel(Candidate.name)
+    private candidateModel: Model<Candidate>,
     private mailService: MailService,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   // Create Profile
@@ -95,10 +98,18 @@ export class CandidatesService {
   }
 
   // Return EVERYTHING (Public + Private)
-  async unlock(id: string): Promise<Candidate> {
-    // 1. Fetch Candidate + User Email
+  async unlock(candidateId: string, recruiterId: string): Promise<Candidate> {
+    const recruiter = await this.userModel.findById(recruiterId);
+    if (!recruiter) {
+      throw new BadRequestException('Recruiter not found.');
+    }
+    if (recruiter.status !== UserStatus.ACTIVE) {
+      throw new BadRequestException(
+        'Your account is pending approval. Please contact Admin.',
+      );
+    }
     const candidate = await this.candidateModel
-      .findById(id)
+      .findById(candidateId)
       .populate('user', 'email'); // Get the email from the User table
 
     if (!candidate) {

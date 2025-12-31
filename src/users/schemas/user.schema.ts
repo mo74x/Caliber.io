@@ -7,6 +7,12 @@ export enum UserRole {
   RECRUITER = 'RECRUITER',
   ADMIN = 'ADMIN',
 }
+// Define the statuses available in Calibar
+export enum UserStatus {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  BANNED = 'BANNED',
+}
 
 @Schema({ timestamps: true }) // automatically adds createdAt and updatedAt
 export class User extends Document {
@@ -21,6 +27,8 @@ export class User extends Document {
 
   @Prop({ default: true })
   isActive: boolean;
-}
 
+  @Prop({ default: UserStatus.ACTIVE, enum: UserStatus })
+  status: UserStatus;
+}
 export const UserSchema = SchemaFactory.createForClass(User);
