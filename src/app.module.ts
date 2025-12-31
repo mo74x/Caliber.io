@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { CandidatesModule } from './candidates/candidates.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { MailModule } from './mail/mail.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -22,10 +24,24 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
       }),
       inject: [ConfigService],
     }),
+    MailerModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get('MAIL_HOST'),
+          port: 587,
+          auth: {
+            user: config.get('MAIL_USER'),
+            pass: config.get('MAIL_PASS'),
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
     AuthModule,
     CandidatesModule,
     CloudinaryModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

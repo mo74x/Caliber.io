@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, BadRequestException } from '@nestjs/common';
@@ -7,11 +8,13 @@ import { Candidate } from './schemas/candidate.schema';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { SearchCandidateDto } from './dto/search-candidate.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class CandidatesService {
   constructor(
     @InjectModel(Candidate.name) private candidateModel: Model<Candidate>,
+    private mailService: MailService,
   ) {}
 
   // Create Profile
@@ -93,11 +96,38 @@ export class CandidatesService {
 
   // Return EVERYTHING (Public + Private)
   async unlock(id: string): Promise<Candidate> {
-    const profile = await this.candidateModel.findById(id).exec();
-    if (!profile) {
-      throw new BadRequestException('Profile not found');
+    // 1. Fetch Candidate + User Email
+    const candidate = await this.candidateModel
+      .findById(id)
+      .populate('user', 'email'); // Get the email from the User table
+
+    if (!candidate) {
+      console.log('❌ Candidate not found');
+      throw new BadRequestException('Candidate not found');
     }
-    return profile;
+
+    // 2. Extract Email safely
+    const userObj = candidate.user as any;
+    console.log('🔍 User Object found:', userObj);
+
+    if (userObj && userObj.email) {
+      console.log(`📧 Attempting to send email to: ${userObj.email}`);
+
+      try {
+        // We put 'await' here so we can catch errors if sending fails
+        await this.mailService.sendUnlockNotification(
+          userObj.email,
+          candidate.fullName,
+        );
+        console.log('✅ Email sent successfully!');
+      } catch (error) {
+        console.error('❌ Email failed to send:', error);
+      }
+    } else {
+      console.log('⚠️ No email found for this user!');
+    }
+
+    return candidate;
   }
 
   async updateCvUrl(userId: string, url: string): Promise<Candidate> {

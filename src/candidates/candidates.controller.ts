@@ -55,12 +55,10 @@ export class CandidatesController {
     return this.candidatesService.handleCron();
   }
 
-  // GET /candidates/:id/unlock
+  // GET /candidates/unlock/:id
   @UseGuards(AuthGuard('jwt'))
   @Get(':id/unlock')
-  unlockCandidate(@Param('id') id: string) {
-    // In a real app, we would check if the company has "Credits" here.
-    // For now, we just return the full profile.
+  async unlockCandidate(@Param('id') id: string) {
     return this.candidatesService.unlock(id);
   }
 

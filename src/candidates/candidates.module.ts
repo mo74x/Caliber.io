@@ -4,6 +4,7 @@ import { CandidatesService } from './candidates.service';
 import { CandidatesController } from './candidates.controller';
 import { Candidate, CandidateSchema } from './schemas/candidate.schema';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
       { name: Candidate.name, schema: CandidateSchema },
     ]),
     CloudinaryModule,
+    MailModule,
   ],
   controllers: [CandidatesController],
   providers: [CandidatesService],
