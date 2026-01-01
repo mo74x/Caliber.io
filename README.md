@@ -51,7 +51,14 @@ A talent recruitment platform API built with NestJS, MongoDB, and Stripe. Recrui
 ### 📧 Email
 
 - Password reset emails with secure tokens
+- Unlock notification emails to candidates
 - Handlebars email templates
+
+### 📊 Analytics
+
+- Track recruiter activity (profile views, unlocks)
+- Dashboard with aggregated stats
+- Event logging for audit trail
 
 ## Getting Started
 
@@ -157,6 +164,7 @@ http://localhost:3001/api
 | POST   | `/candidates`            | Create candidate profile | JWT  |
 | GET    | `/candidates/me`         | Get my profile           | JWT  |
 | GET    | `/candidates/search`     | Search candidates        | -    |
+| GET    | `/candidates/:id`        | View candidate (logged)  | JWT  |
 | GET    | `/candidates/:id/unlock` | Unlock a candidate       | JWT  |
 | POST   | `/candidates/upload-cv`  | Upload CV file           | JWT  |
 
@@ -176,6 +184,12 @@ http://localhost:3001/api
 | GET    | `/payments/success`                 | Payment success page   | -    |
 | GET    | `/payments/cancel`                  | Payment cancelled page | -    |
 | POST   | `/payments/webhook`                 | Stripe webhook handler | -    |
+
+### Analytics (`/analytics`)
+
+| Method | Endpoint               | Description         | Auth |
+| ------ | ---------------------- | ------------------- | ---- |
+| GET    | `/analytics/dashboard` | Get recruiter stats | JWT  |
 
 ## Project Structure
 
@@ -203,6 +217,10 @@ src/
 ├── payments/             # Stripe integration
 │   ├── payments.controller.ts
 │   └── payments.service.ts
+├── analytics/            # Analytics & tracking
+│   ├── analytics.controller.ts
+│   ├── analytics.service.ts
+│   └── schemas/
 ├── cloudinary/           # File upload service
 │   └── cloudinary.service.ts
 ├── mail/                 # Email service
