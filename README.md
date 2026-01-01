@@ -1,98 +1,216 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Caliber.io Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A talent recruitment platform API built with NestJS, MongoDB, and Stripe. Recruiters can search, unlock, and bookmark candidate profiles using a credit-based system.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+- **Framework**: NestJS 11
+- **Database**: MongoDB (Mongoose ODM)
+- **Authentication**: JWT + Passport
+- **Payments**: Stripe
+- **File Storage**: Cloudinary
+- **Email**: Nodemailer with Handlebars templates
+- **Documentation**: Swagger/OpenAPI
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Project setup
+### 🔐 Authentication
+
+- User registration with role-based access (Candidate, Recruiter, Admin)
+- JWT-based authentication
+- Password reset via email with secure tokens
+- Admin approval workflow for new users
+
+### 👤 User Management
+
+- User registration and profile management
+- Credit system for recruiters
+- Admin can approve/reject pending users
+- Role-based access control (RBAC)
+
+### 📋 Candidate Profiles
+
+- Candidates can create and manage their profiles
+- CV/resume upload to Cloudinary (PDF, images up to 5MB)
+- Profile search with filters (skills, location, job title, etc.)
+- Paginated search results
+- Profile unlocking system (costs credits)
+
+### 🔖 Bookmarks
+
+- Recruiters can bookmark candidate profiles
+- View all bookmarked candidates
+- Add/remove bookmarks
+
+### 💳 Payments (Stripe)
+
+- Stripe Checkout integration for purchasing credits
+- Webhook handling for payment verification
+- Automatic credit addition after successful payment
+
+### 📧 Email
+
+- Password reset emails with secure tokens
+- Handlebars email templates
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB instance
+- Stripe account
+- Cloudinary account
+- SMTP server (for emails)
+
+### Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Database
+MONGODB_URI=mongodb://localhost:27017/caliber
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_xxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Email (SMTP)
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USER=your-email@example.com
+MAIL_PASS=your-email-password
+MAIL_FROM=noreply@caliber.io
+
+# App
+FRONTEND_URL=http://localhost:3000
+```
+
+### Running the App
 
 ```bash
-# development
-$ npm run start
+# Development (watch mode)
+npm run start:dev
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Production
+npm run build
+npm run start:prod
 ```
 
-## Run tests
+### Testing Stripe Webhooks Locally
 
-```bash
-# unit tests
-$ npm run test
+1. Install the [Stripe CLI](https://stripe.com/docs/stripe-cli)
+2. Forward webhooks to your local server:
+   ```bash
+   stripe listen --forward-to localhost:3001/payments/webhook
+   ```
+3. Copy the webhook signing secret and add to `.env`:
+   ```
+   STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+   ```
 
-# e2e tests
-$ npm run test:e2e
+## API Documentation
 
-# test coverage
-$ npm run test:cov
+Once the server is running, access the Swagger UI at:
+
+```
+http://localhost:3001/api
 ```
 
-## Deployment
+## API Endpoints
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Auth (`/auth`)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Method | Endpoint                | Description                  |
+| ------ | ----------------------- | ---------------------------- |
+| POST   | `/auth/login`           | Login with email/password    |
+| POST   | `/auth/forgot-password` | Request password reset email |
+| POST   | `/auth/reset-password`  | Reset password with token    |
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+### Users (`/users`)
+
+| Method | Endpoint             | Description          | Auth  |
+| ------ | -------------------- | -------------------- | ----- |
+| POST   | `/users`             | Register new user    | -     |
+| GET    | `/users`             | Get all users        | Admin |
+| POST   | `/users/:id/approve` | Approve pending user | Admin |
+| POST   | `/users/add-credits` | Add credits (dev)    | JWT   |
+
+### Candidates (`/candidates`)
+
+| Method | Endpoint                 | Description              | Auth |
+| ------ | ------------------------ | ------------------------ | ---- |
+| POST   | `/candidates`            | Create candidate profile | JWT  |
+| GET    | `/candidates/me`         | Get my profile           | JWT  |
+| GET    | `/candidates/search`     | Search candidates        | -    |
+| GET    | `/candidates/:id/unlock` | Unlock a candidate       | JWT  |
+| POST   | `/candidates/upload-cv`  | Upload CV file           | JWT  |
+
+### Bookmarks (`/bookmarks`)
+
+| Method | Endpoint                  | Description          | Auth |
+| ------ | ------------------------- | -------------------- | ---- |
+| POST   | `/bookmarks/:candidateId` | Bookmark a candidate | JWT  |
+| DELETE | `/bookmarks/:candidateId` | Remove bookmark      | JWT  |
+| GET    | `/bookmarks`              | Get my bookmarks     | JWT  |
+
+### Payments (`/payments`)
+
+| Method | Endpoint                            | Description            | Auth |
+| ------ | ----------------------------------- | ---------------------- | ---- |
+| POST   | `/payments/create-checkout-session` | Create Stripe checkout | JWT  |
+| GET    | `/payments/success`                 | Payment success page   | -    |
+| GET    | `/payments/cancel`                  | Payment cancelled page | -    |
+| POST   | `/payments/webhook`                 | Stripe webhook handler | -    |
+
+## Project Structure
+
 ```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+src/
+├── auth/                 # Authentication module
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── jwt.strategy.ts
+│   └── roles.guard.ts
+├── users/                # User management
+│   ├── users.controller.ts
+│   ├── users.service.ts
+│   ├── dto/
+│   └── schemas/
+├── candidates/           # Candidate profiles
+│   ├── candidates.controller.ts
+│   ├── candidates.service.ts
+│   ├── dto/
+│   └── schemas/
+├── bookmarks/            # Bookmark functionality
+│   ├── bookmarks.controller.ts
+│   ├── bookmarks.service.ts
+│   └── schemas/
+├── payments/             # Stripe integration
+│   ├── payments.controller.ts
+│   └── payments.service.ts
+├── cloudinary/           # File upload service
+│   └── cloudinary.service.ts
+├── mail/                 # Email service
+│   └── mail.service.ts
+├── app.module.ts
+└── main.ts
+```
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+UNLICENSED
