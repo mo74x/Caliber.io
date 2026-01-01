@@ -80,6 +80,13 @@ export class CandidatesController {
     // req.user contains the logged in user's ID
     return this.candidatesService.unlock(id, req.user.id); // Pass the Recruiter's ID
   }
+  // Get One Profile
+  @UseGuards(AuthGuard('jwt')) // Ensure they are logged in so we can track them
+  @Get(':id')
+  findOne(@Param('id') id: string, @Request() req) {
+    // Pass the Candidate ID AND the User ID
+    return this.candidatesService.findOne(id, req.user.id);
+  }
 
   // POST /candidates/upload-cv
   @UseGuards(AuthGuard('jwt'))

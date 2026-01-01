@@ -7,6 +7,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { MailModule } from 'src/mail/mail.module';
 import { UsersModule } from '../users/users.module';
 import { User, UserSchema } from 'src/users/schemas/user.schema';
+import { AnalyticsModule } from '../analytics/analytics.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { User, UserSchema } from 'src/users/schemas/user.schema';
     CloudinaryModule,
     MailModule,
     UsersModule,
+    AnalyticsModule,
   ],
   controllers: [CandidatesController],
   providers: [CandidatesService],

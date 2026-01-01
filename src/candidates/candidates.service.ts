@@ -10,6 +10,8 @@ import { SearchCandidateDto } from './dto/search-candidate.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MailService } from '../mail/mail.service';
 import { User, UserStatus } from '../users/schemas/user.schema';
+import { AnalyticsService } from '../analytics/analytics.service';
+import { AnalyticsAction } from '../analytics/schemas/analytics.schema';
 
 @Injectable()
 export class CandidatesService {
@@ -17,6 +19,7 @@ export class CandidatesService {
     @InjectModel(Candidate.name)
     private candidateModel: Model<Candidate>,
     private mailService: MailService,
+    private analyticsService: AnalyticsService,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
@@ -43,12 +46,19 @@ export class CandidatesService {
   }
 
   // Get My Profile
-  async findOne(userId: string): Promise<Candidate> {
-    const profile = await this.candidateModel.findOne({ user: userId });
-    if (!profile) {
-      throw new BadRequestException('Profile not found');
+  async findOne(id: string, recruiterId?: string) {
+    const candidate = await this.candidateModel.findById(id);
+    if (!candidate) {
+      throw new BadRequestException('Candidate not found');
     }
-    return profile;
+    // LOG THE VIEW EVENT (If a recruiter is looking)
+    if (recruiterId) {
+      // We use .catch() so analytics errors don't crash the main request
+      this.analyticsService
+        .logEvent(recruiterId, id, AnalyticsAction.VIEW)
+        .catch(console.error);
+    }
+    return candidate;
   }
 
   // Search Profiles
@@ -130,6 +140,13 @@ export class CandidatesService {
     //DEDUCT: Charge 1 Credit
     recruiter.credits -= 1;
     await recruiter.save();
+    // LOG THE UNLOCK EVENT
+    await this.analyticsService.logEvent(
+      recruiterId,
+      candidateId,
+      AnalyticsAction.UNLOCK,
+    );
+
     const candidate = await this.candidateModel
       .findById(candidateId)
       .populate('user', 'email'); // Get the email from the User table

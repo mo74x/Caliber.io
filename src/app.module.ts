@@ -14,6 +14,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { PaymentsModule } from './payments/payments.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { PaymentsModule } from './payments/payments.module';
     MailModule,
     BookmarksModule,
     PaymentsModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [
