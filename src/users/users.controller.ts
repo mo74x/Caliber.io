@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, UseGuards, Param } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Param,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesGuard } from '../auth/roles.guard';
@@ -51,5 +60,13 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   findAll() {
     return this.usersService.findAll();
+  }
+
+  // Dev Only: Add Credits
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add-credits')
+  addCredits(@Request() req, @Body('amount') amount: number) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return this.usersService.addCredits(req.user.id, amount);
   }
 }

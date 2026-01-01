@@ -58,4 +58,13 @@ export class UsersService {
   async findOneByResetToken(token: string): Promise<User | null> {
     return this.userModel.findOne({ resetPasswordToken: token });
   }
+
+  // Dev Only: Add Credits
+  async addCredits(userId: string, amount: number) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $inc: { credits: amount } }, // $inc means "increment"
+      { new: true },
+    );
+  }
 }

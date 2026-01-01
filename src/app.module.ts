@@ -13,6 +13,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
     CloudinaryModule,
     MailModule,
     BookmarksModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [

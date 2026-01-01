@@ -122,6 +122,14 @@ export class CandidatesService {
         'Your account is pending approval. Please contact Admin.',
       );
     }
+    if (recruiter.credits < 1) {
+      throw new BadRequestException(
+        'Insufficient credits. Please purchase more.',
+      );
+    }
+    //DEDUCT: Charge 1 Credit
+    recruiter.credits -= 1;
+    await recruiter.save();
     const candidate = await this.candidateModel
       .findById(candidateId)
       .populate('user', 'email'); // Get the email from the User table

@@ -65,5 +65,8 @@ export class User extends Document {
   })
   @Prop()
   resetPasswordExpires?: Date;
+
+  @Prop({ default: 0 })
+  credits: number; // The user's wallet balance
 }
 export const UserSchema = SchemaFactory.createForClass(User);
