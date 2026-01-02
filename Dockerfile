@@ -10,6 +10,6 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE ${PORT}
+EXPOSE 8000
 
 CMD ["npm", "run", "start:prod"]
