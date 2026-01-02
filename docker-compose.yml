@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # OPTION 1: To use the Local DB below (Good for testing)
+      - MONGODB_URI=mongodb+srv://mohamed3rafa01_db_user:eJESM9TXwS8tFt52@calibercluster.erlkuqz.mongodb.net/
+            
+      - JWT_SECRET=docker_secret_key
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

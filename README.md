@@ -64,11 +64,12 @@ A talent recruitment platform API built with NestJS, MongoDB, and Stripe. Recrui
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+ (required for NestJS 11, Mongoose 9, etc.)
 - MongoDB instance
 - Stripe account
 - Cloudinary account
 - SMTP server (for emails)
+- Docker & Docker Compose (optional, for containerized deployment)
 
 ### Installation
 
@@ -117,6 +118,30 @@ npm run start:dev
 npm run build
 npm run start:prod
 ```
+
+### Running with Docker
+
+The easiest way to run the entire stack (API + MongoDB):
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in background
+docker-compose up -d --build
+
+# Stop all services
+docker-compose down
+```
+
+**Environment Variables for Docker:**
+
+Docker Compose automatically reads from your `.env` file. You can also set variables directly in `docker-compose.yml` under the `environment` section.
+
+The Docker setup uses:
+- **Node.js 22 Alpine** for the API container
+- **MongoDB latest** for the database container
+- Persistent volume for MongoDB data
 
 ### Testing Stripe Webhooks Locally
 
