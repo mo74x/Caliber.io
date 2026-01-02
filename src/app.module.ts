@@ -15,6 +15,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { BullModule } from '@nestjs/bullmq';
+import { ResumeModule } from './resume/resume.module';
 
 @Module({
   imports: [
@@ -26,6 +28,16 @@ import { AnalyticsModule } from './analytics/analytics.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
         uri: config.get<string>('MONGODB_URI'),
+      }),
+      inject: [ConfigService],
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get('REDIS_HOST') || 'localhost',
+          port: parseInt(configService.get('REDIS_PORT') || '6379', 10),
+        },
       }),
       inject: [ConfigService],
     }),
@@ -56,6 +68,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     BookmarksModule,
     PaymentsModule,
     AnalyticsModule,
+    ResumeModule,
   ],
   controllers: [AppController],
   providers: [

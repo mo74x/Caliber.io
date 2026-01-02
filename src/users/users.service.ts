@@ -1,13 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User, UserRole, UserStatus } from './schemas/user.schema';
+import { ResumeService } from '../resume/resume.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private resumeService: ResumeService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   // 1. Create a new User
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -66,5 +76,13 @@ export class UsersService {
       { $inc: { credits: amount } }, // $inc means "increment"
       { new: true },
     );
+  }
+
+  async uploadResume(userId: string, file: Express.Multer.File) {
+    const result = await this.cloudinaryService.uploadFile(file);
+    await this.userModel.findByIdAndUpdate(userId, { resumeUrl: result.url });
+    // NEW: Trigger the Background Job! 🚀
+    await this.resumeService.queueResumeForParsing(userId, result.url);
+    return result;
   }
 }
