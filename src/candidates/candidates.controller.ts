@@ -31,6 +31,7 @@ import {
   ApiResponse,
   ApiConsumes,
   ApiBody,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('Candidates')
@@ -40,7 +41,7 @@ export class CandidatesController {
   constructor(
     private readonly candidatesService: CandidatesService,
     private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
 
   @UseGuards(AuthGuard('jwt')) //locks the endpoint!
   @Post()
@@ -67,6 +68,8 @@ export class CandidatesController {
   }
   //dev-test-for-cron
   @Post('test-cron')
+  @ApiOperation({ summary: 'Trigger cron job manually (Dev/Testing)' })
+  @ApiResponse({ status: 200, description: 'Cron job triggered' })
   triggerCron() {
     return this.candidatesService.handleCron();
   }
@@ -83,6 +86,10 @@ export class CandidatesController {
   // Get One Profile
   @UseGuards(AuthGuard('jwt')) // Ensure they are logged in so we can track them
   @Get(':id')
+  @ApiOperation({ summary: 'Get a candidate profile by ID' })
+  @ApiParam({ name: 'id', description: 'Candidate ID' })
+  @ApiResponse({ status: 200, description: 'Candidate profile found' })
+  @ApiResponse({ status: 404, description: 'Candidate not found' })
   findOne(@Param('id') id: string, @Request() req) {
     // Pass the Candidate ID AND the User ID
     return this.candidatesService.findOne(id, req.user.id);

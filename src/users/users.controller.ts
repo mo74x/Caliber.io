@@ -19,12 +19,13 @@ import {
   ApiOperation,
   ApiBearerAuth,
   ApiResponse,
+  ApiBody,
 } from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   // Endpoint: POST /users
   @Post()
@@ -65,6 +66,19 @@ export class UsersController {
   // Dev Only: Add Credits
   @UseGuards(AuthGuard('jwt'))
   @Post('add-credits')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Add credits to current user (Dev/Testing)' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        amount: { type: 'number', example: 10, description: 'Number of credits to add' },
+      },
+      required: ['amount'],
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Credits added successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   addCredits(@Request() req, @Body('amount') amount: number) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.usersService.addCredits(req.user.id, amount);
