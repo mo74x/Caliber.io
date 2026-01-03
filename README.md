@@ -139,6 +139,7 @@ docker-compose down
 Docker Compose automatically reads from your `.env` file. You can also set variables directly in `docker-compose.yml` under the `environment` section.
 
 The Docker setup uses:
+
 - **Node.js 22 Alpine** for the API container
 - **MongoDB latest** for the database container
 - Persistent volume for MongoDB data
@@ -160,7 +161,7 @@ The Docker setup uses:
 Once the server is running, access the Swagger UI at:
 
 ```
-http://localhost:3001/api
+http://localhost:3000/api
 ```
 
 ## API Endpoints
@@ -175,12 +176,13 @@ http://localhost:3001/api
 
 ### Users (`/users`)
 
-| Method | Endpoint             | Description          | Auth  |
-| ------ | -------------------- | -------------------- | ----- |
-| POST   | `/users`             | Register new user    | -     |
-| GET    | `/users`             | Get all users        | Admin |
-| POST   | `/users/:id/approve` | Approve pending user | Admin |
-| POST   | `/users/add-credits` | Add credits (dev)    | JWT   |
+| Method | Endpoint               | Description          | Auth  |
+| ------ | ---------------------- | -------------------- | ----- |
+| POST   | `/users`               | Register new user    | -     |
+| GET    | `/users`               | Get all users        | Admin |
+| POST   | `/users/:id/approve`   | Approve pending user | Admin |
+| POST   | `/users/add-credits`   | Add credits (dev)    | JWT   |
+| POST   | `/users/upload-resume` | Upload resume        | JWT   |
 
 ### Candidates (`/candidates`)
 
@@ -215,6 +217,12 @@ http://localhost:3001/api
 | Method | Endpoint               | Description         | Auth |
 | ------ | ---------------------- | ------------------- | ---- |
 | GET    | `/analytics/dashboard` | Get recruiter stats | JWT  |
+
+### Resume (`/resume`)
+
+| Method | Endpoint             | Description              | Auth |
+| ------ | -------------------- | ------------------------ | ---- |
+| POST   | `/resume/test-parse` | Queue resume for parsing | -    |
 
 ## Project Structure
 
