@@ -2,6 +2,8 @@
 
 A talent recruitment platform API built with NestJS, MongoDB, and Stripe. Recruiters can search, unlock, and bookmark candidate profiles using a credit-based system.
 
+![Caliber API Architecture](assets/architecture.png)
+
 ## Tech Stack
 
 - **Framework**: NestJS 11
