@@ -41,7 +41,7 @@ export class CandidatesController {
   constructor(
     private readonly candidatesService: CandidatesService,
     private readonly cloudinaryService: CloudinaryService,
-  ) { }
+  ) {}
 
   @UseGuards(AuthGuard('jwt')) //locks the endpoint!
   @Post()

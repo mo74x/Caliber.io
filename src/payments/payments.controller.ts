@@ -22,13 +22,18 @@ import {
 @ApiTags('Payments')
 @Controller('payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) { }
+  constructor(private readonly paymentsService: PaymentsService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post('create-checkout-session')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a Stripe checkout session for purchasing credits' })
-  @ApiResponse({ status: 201, description: 'Checkout session created successfully' })
+  @ApiOperation({
+    summary: 'Create a Stripe checkout session for purchasing credits',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Checkout session created successfully',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   createSession(@Request() req) {
     return this.paymentsService.createCheckoutSession(req.user.id);
@@ -59,7 +64,10 @@ export class PaymentsController {
     required: true,
   })
   @ApiResponse({ status: 200, description: 'Webhook processed successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid signature or missing header' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid signature or missing header',
+  })
   async handleWebhook(
     @Headers('stripe-signature') signature: string,
     @Request() req,
@@ -71,4 +79,3 @@ export class PaymentsController {
     return this.paymentsService.handleWebhook(signature, req.rawBody);
   }
 }
-

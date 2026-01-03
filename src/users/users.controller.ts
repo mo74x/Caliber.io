@@ -7,7 +7,10 @@ import {
   UseGuards,
   Param,
   Request,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesGuard } from '../auth/roles.guard';
@@ -25,7 +28,7 @@ import {
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   // Endpoint: POST /users
   @Post()
@@ -72,7 +75,11 @@ export class UsersController {
     schema: {
       type: 'object',
       properties: {
-        amount: { type: 'number', example: 10, description: 'Number of credits to add' },
+        amount: {
+          type: 'number',
+          example: 10,
+          description: 'Number of credits to add',
+        },
       },
       required: ['amount'],
     },
@@ -82,5 +89,18 @@ export class UsersController {
   addCredits(@Request() req, @Body('amount') amount: number) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.usersService.addCredits(req.user.id, amount);
+  }
+
+  // Upload Resume
+  @UseGuards(AuthGuard('jwt'))
+  @Post('upload-resume')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Upload resume for current user' })
+  @ApiResponse({ status: 200, description: 'Resume uploaded successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  uploadResume(@Request() req, @UploadedFile() file: Express.Multer.File) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return this.usersService.uploadResume(req.user.id, file);
   }
 }
