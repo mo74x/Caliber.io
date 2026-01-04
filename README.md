@@ -266,4 +266,4 @@ src/
 
 ## License
 
-UNLICENSED
+This project is licensed under the [MIT License](LICENSE).
