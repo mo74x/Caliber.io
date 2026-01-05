@@ -15,7 +15,7 @@ import {
 @UseGuards(AuthGuard('jwt'))
 @Controller('analytics')
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) { }
+  constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Get('dashboard')
   @ApiOperation({ summary: 'Get recruiter analytics dashboard stats' })
@@ -28,4 +28,3 @@ export class AnalyticsController {
     return this.analyticsService.getRecruiterStats(req.user.id);
   }
 }
-

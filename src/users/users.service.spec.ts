@@ -4,6 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
+import { ResumeService } from '../resume/resume.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 // Mock save function
 const mockSave = jest.fn();
@@ -22,6 +24,16 @@ MockUserModel.findById = jest.fn();
 MockUserModel.findByIdAndUpdate = jest.fn();
 MockUserModel.find = jest.fn();
 
+// Mock ResumeService
+const mockResumeService = {
+  queueResumeForParsing: jest.fn(),
+};
+
+// Mock CloudinaryService
+const mockCloudinaryService = {
+  uploadFile: jest.fn(),
+};
+
 describe('UsersService', () => {
   let service: UsersService;
 
@@ -34,6 +46,14 @@ describe('UsersService', () => {
         {
           provide: getModelToken(User.name),
           useValue: MockUserModel,
+        },
+        {
+          provide: ResumeService,
+          useValue: mockResumeService,
+        },
+        {
+          provide: CloudinaryService,
+          useValue: mockCloudinaryService,
         },
       ],
     }).compile();
