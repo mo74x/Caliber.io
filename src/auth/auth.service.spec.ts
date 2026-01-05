@@ -44,7 +44,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should return an access token and user info', async () => {
+    it('should return an access token and user info', () => {
       const result = service.login({
         email: 'test@test.com',
         _id: '123',
