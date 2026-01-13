@@ -2,16 +2,16 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   # JOB 1: TEST THE CODE 🧪
   test:
     name: Build & Test
-    runs-on: ubuntu-latest
-    
+    runs-on: tenki-standard-medium-4c-8g
+
     services:
       # We need a fake MongoDB to run tests against
       mongo:
@@ -40,7 +40,7 @@ jobs:
       - name: Run Linter (Check code style)
         run: npm run lint
 
-      - name: Run Unit Tests 
+      - name: Run Unit Tests
         run: npm run test
         env:
           # Fake env vars for testing
@@ -52,19 +52,19 @@ jobs:
   # JOB 2: CHECK DOCKER BUILD 🐳
   docker-check:
     name: Verify Docker Build
-    runs-on: ubuntu-latest
+    runs-on: tenki-standard-medium-4c-8g
     needs: test # Only run if tests pass
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
+
       - name: Build Docker Image
         run: docker build . --file Dockerfile
 
   # JOB 3: DEPLOY (CD) 🚀
   deploy-notification:
     name: Ready for Deploy
-    runs-on: ubuntu-latest
+    runs-on: tenki-standard-medium-4c-8g
     needs: [test, docker-check]
     steps:
       - name: Echo Deploy Status
